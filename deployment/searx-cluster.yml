@@ -1,0 +1,255 @@
+# Searx集群部署配置 - Open Search MCP v2.0
+# 自部署Searx集群，实现技术自主
+
+version: '3.8'
+
+services:
+  # Searx节点1 - 主节点
+  searx-node-1:
+    image: searxng/searxng:latest
+    container_name: searx-node-1
+    environment:
+      - SEARXNG_SECRET=${SEARXNG_SECRET:?SEARXNG_SECRET is required}
+      - SEARXNG_HOSTNAME=searx-node-1
+      - SEARXNG_PORT=8080
+      - SEARXNG_BIND_ADDRESS=0.0.0.0
+    volumes:
+      - ./searx-config:/etc/searxng:ro
+      - searx-data-1:/var/lib/searxng
+    networks:
+      - searx-network
+    restart: unless-stopped
+    # Security hardening
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /var/run:noexec,nosuid,size=100m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "searx.node=primary"
+      - "searx.weight=10"
+
+  # Searx节点2 - 备用节点
+  searx-node-2:
+    image: searxng/searxng:latest
+    container_name: searx-node-2
+    environment:
+      - SEARXNG_SECRET=${SEARXNG_SECRET:?SEARXNG_SECRET is required}
+      - SEARXNG_HOSTNAME=searx-node-2
+      - SEARXNG_PORT=8080
+      - SEARXNG_BIND_ADDRESS=0.0.0.0
+    volumes:
+      - ./searx-config:/etc/searxng:ro
+      - searx-data-2:/var/lib/searxng
+    networks:
+      - searx-network
+    restart: unless-stopped
+    # Security hardening
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /var/run:noexec,nosuid,size=100m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "searx.node=backup"
+      - "searx.weight=8"
+
+  # Searx节点3 - 备用节点
+  searx-node-3:
+    image: searxng/searxng:latest
+    container_name: searx-node-3
+    environment:
+      - SEARXNG_SECRET=${SEARXNG_SECRET:?SEARXNG_SECRET is required}
+      - SEARXNG_HOSTNAME=searx-node-3
+      - SEARXNG_PORT=8080
+      - SEARXNG_BIND_ADDRESS=0.0.0.0
+    volumes:
+      - ./searx-config:/etc/searxng:ro
+      - searx-data-3:/var/lib/searxng
+    networks:
+      - searx-network
+    restart: unless-stopped
+    # Security hardening
+    security_opt:
+      - no-new-privileges:true
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=100m
+      - /var/run:noexec,nosuid,size=100m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/stats"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "searx.node=backup"
+      - "searx.weight=6"
+
+  # Nginx负载均衡器
+  searx-loadbalancer:
+    image: nginx:alpine
+    container_name: searx-loadbalancer
+    ports:
+      - "8080:80"
+      - "8081:81"
+      - "8082:82"
+    volumes:
+      - ./nginx-searx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx-upstream.conf:/etc/nginx/conf.d/upstream.conf:ro
+    networks:
+      - searx-network
+    depends_on:
+      - searx-node-1
+      - searx-node-2
+      - searx-node-3
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "searx.component=loadbalancer"
+
+  # Redis缓存集群 - 主节点
+  redis-master:
+    image: redis:7-alpine
+    container_name: redis-master
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-master-data:/data
+    networks:
+      - searx-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "redis.role=master"
+
+  # Redis缓存集群 - 从节点
+  redis-slave:
+    image: redis:7-alpine
+    container_name: redis-slave
+    command: redis-server --slaveof redis-master 6379 --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-slave-data:/data
+    networks:
+      - searx-network
+    depends_on:
+      - redis-master
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      - "redis.role=slave"
+
+  # Prometheus监控
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: searx-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - searx-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=7d'
+      - '--web.enable-lifecycle'
+    labels:
+      - "monitoring.component=prometheus"
+
+  # Grafana仪表板
+  grafana:
+    image: grafana/grafana:latest
+    container_name: searx-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD is required}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SECURITY_DISABLE_GRAVATAR=true
+      - GF_SECURITY_COOKIE_SECURE=true
+      - GF_SECURITY_COOKIE_SAMESITE=strict
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana-datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - searx-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    labels:
+      - "monitoring.component=grafana"
+
+networks:
+  searx-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  searx-data-1:
+    driver: local
+  searx-data-2:
+    driver: local
+  searx-data-3:
+    driver: local
+  redis-master-data:
+    driver: local
+  redis-slave-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+# 健康检查和自动恢复
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+
+# 重启策略
+x-restart-policy: &restart-policy
+  restart: unless-stopped
+
+# 环境变量模板
+# 创建 .env 文件并设置以下变量:
+# SEARXNG_SECRET=your-very-long-secret-key-here
+# GRAFANA_PASSWORD=your-grafana-password
+# REDIS_PASSWORD=your-redis-password (可选)
+# LOG_LEVEL=info

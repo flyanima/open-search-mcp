@@ -1,0 +1,248 @@
+# Searx配置文件 - Open Search MCP v2.0
+# 自部署Searx集群的核心配置
+
+# 基础配置
+use_default_settings: true
+
+general:
+  debug: false
+  instance_name: "Open Search MCP Searx"
+  privacypolicy_url: false
+  donation_url: false
+  contact_url: false
+  enable_metrics: true
+
+# 搜索配置
+search:
+  safe_search: 1  # 0=off, 1=moderate, 2=strict
+  autocomplete: "google"
+  autocomplete_min: 4
+  default_lang: "en"
+  ban_time_on_fail: 5
+  max_ban_time_on_fail: 120
+  formats:
+    - html
+    - json
+    - csv
+    - rss
+
+# 服务器配置
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  secret_key: "@SEARXNG_SECRET@"
+  base_url: false
+  image_proxy: false
+  http_protocol_version: "1.0"
+  method: "POST"
+  default_http_headers:
+    X-Content-Type-Options: nosniff
+    X-XSS-Protection: 1; mode=block
+    X-Download-Options: noopen
+    X-Robots-Tag: noindex, nofollow
+    Referrer-Policy: no-referrer
+
+# UI配置
+ui:
+  static_use_hash: false
+  default_locale: "en"
+  query_in_title: false
+  infinite_scroll: false
+  center_alignment: false
+  cache_url: https://web.archive.org/web/
+  default_theme: simple
+  theme_args:
+    simple_style: auto
+
+# 搜索引擎配置
+engines:
+  # 通用搜索引擎
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    timeout: 3.0
+    disabled: false
+    categories: general
+    
+  - name: google
+    engine: google
+    shortcut: go
+    timeout: 3.0
+    disabled: false
+    categories: general
+    use_mobile_ui: false
+    
+  - name: bing
+    engine: bing
+    shortcut: bi
+    timeout: 3.0
+    disabled: false
+    categories: general
+    
+  - name: yahoo
+    engine: yahoo
+    shortcut: yh
+    timeout: 3.0
+    disabled: false
+    categories: general
+
+  # 学术搜索
+  - name: arxiv
+    engine: arxiv
+    shortcut: arx
+    timeout: 4.0
+    disabled: false
+    categories: science
+    
+  - name: pubmed
+    engine: pubmed
+    shortcut: pub
+    timeout: 4.0
+    disabled: false
+    categories: science
+    
+  - name: semantic scholar
+    engine: semantic_scholar
+    shortcut: se
+    timeout: 4.0
+    disabled: false
+    categories: science
+
+  # 新闻搜索
+  - name: bing news
+    engine: bing_news
+    shortcut: bin
+    timeout: 3.0
+    disabled: false
+    categories: news
+    
+  - name: google news
+    engine: google_news
+    shortcut: gon
+    timeout: 3.0
+    disabled: false
+    categories: news
+
+  # 技术搜索
+  - name: github
+    engine: github
+    shortcut: gh
+    timeout: 4.0
+    disabled: false
+    categories: it
+    
+  - name: stackoverflow
+    engine: stackoverflow
+    shortcut: st
+    timeout: 4.0
+    disabled: false
+    categories: it
+
+  # 图片搜索
+  - name: google images
+    engine: google_images
+    shortcut: goi
+    timeout: 3.0
+    disabled: false
+    categories: images
+    
+  - name: bing images
+    engine: bing_images
+    shortcut: bii
+    timeout: 3.0
+    disabled: false
+    categories: images
+
+  # 视频搜索
+  - name: youtube
+    engine: youtube_noapi
+    shortcut: yt
+    timeout: 4.0
+    disabled: false
+    categories: videos
+
+  # Map search
+  - name: openstreetmap
+    engine: openstreetmap
+    shortcut: osm
+    timeout: 4.0
+    disabled: false
+    categories: map
+
+# Category configuration
+categories_as_tabs:
+  general:
+    - general
+  images:
+    - images
+  videos:
+    - videos
+  news:
+    - news
+  map:
+    - map
+  music:
+    - music
+  it:
+    - it
+  science:
+    - science
+  files:
+    - files
+  social:
+    - social media
+
+# Localization configuration
+locales:
+  en: English
+  zh: Chinese
+  zh-CN: Chinese (Simplified)
+  zh-TW: Chinese (Traditional)
+  ja: Japanese
+  ko: Korean
+  fr: French
+  de: German
+  es: Spanish
+  ru: Russian
+
+# DOI解析器
+doi_resolvers:
+  oadoi.org: 'https://oadoi.org/'
+  doi.org: 'https://doi.org/'
+  doai.io: 'https://doai.io/'
+  sci-hub.se: 'https://sci-hub.se/'
+
+# Default DOI resolver
+default_doi_resolver: 'oadoi.org'
+
+# Redis configuration (if used)
+redis:
+  url: redis://redis-master:6379/0
+
+# 速率限制
+outgoing:
+  request_timeout: 3.0
+  max_request_timeout: 10.0
+  useragent_suffix: ""
+  pool_connections: 100
+  pool_maxsize: 10
+  enable_http2: true
+
+# 结果配置
+result_proxy:
+  url: false
+  key: !!binary ""
+
+# 插件配置
+enabled_plugins:
+  - 'Hash plugin'
+  - 'Search on category select'
+  - 'Self Information'
+  - 'Tracker URL remover'
+  - 'Unit converter plugin'
+  - 'Tor check plugin'
+
+# 禁用的插件
+disabled_plugins:
+  - 'Open Access DOI rewrite'
+  - 'Vim-like hotkeys'

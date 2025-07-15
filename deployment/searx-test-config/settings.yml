@@ -1,0 +1,57 @@
+# 简化的Searx测试配置
+use_default_settings: true
+
+general:
+  debug: false
+  instance_name: "Open Search MCP Test"
+  enable_metrics: true
+
+search:
+  safe_search: 1
+  autocomplete: "google"
+  default_lang: "en"
+  formats:
+    - html
+    - json
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  secret_key: "test-secret-key-for-development"
+  base_url: false
+  image_proxy: false
+
+ui:
+  default_locale: "en"
+  default_theme: simple
+
+# 启用基础搜索引擎
+engines:
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    timeout: 3.0
+    disabled: false
+    categories: general
+    
+  - name: bing
+    engine: bing
+    shortcut: bi
+    timeout: 3.0
+    disabled: false
+    categories: general
+
+# 基础分类
+categories_as_tabs:
+  general:
+    - general
+
+# 本地化
+locales:
+  en: English
+
+# 禁用不需要的插件
+enabled_plugins: []
+disabled_plugins:
+  - 'Open Access DOI rewrite'
+  - 'Vim-like hotkeys'

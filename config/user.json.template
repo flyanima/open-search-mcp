@@ -1,0 +1,36 @@
+{
+  "api": {
+    "keys": {
+      "google": "your_google_api_key_here",
+      "newsapi": "your_newsapi_key_here",
+      "alphavantage": "your_alpha_vantage_key_here",
+      "openweather": "your_openweather_key_here",
+      "github": "your_github_token_here",
+      "reddit_client_id": "your_reddit_client_id_here",
+      "reddit_client_secret": "your_reddit_client_secret_here",
+      "coingecko": "your_coingecko_key_here",
+      "huggingface": "your_huggingface_key_here"
+    },
+    "endpoints": {
+      "custom_search_engine": "your_custom_endpoint_if_needed"
+    }
+  },
+  "cache": {
+    "defaultTTL": 7200,
+    "maxSize": 1500
+  },
+  "logging": {
+    "level": "info",
+    "file": "./logs/user.log"
+  },
+  "features": {
+    "enableAdvancedSearch": true,
+    "enableCaching": true,
+    "enableRateLimit": true,
+    "enableMetrics": false
+  },
+  "performance": {
+    "maxConcurrentRequests": 15,
+    "requestTimeout": 25000
+  }
+}

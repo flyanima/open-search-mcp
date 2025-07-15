@@ -1,0 +1,151 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-commit security and quality checks
+echo "🔒 Running pre-commit security checks..."
+
+# 1. Check for secrets in staged files
+echo "🔍 Checking for secrets..."
+if command -v gitleaks >/dev/null 2>&1; then
+    gitleaks detect --staged --verbose --no-git
+    if [ $? -ne 0 ]; then
+        echo "❌ Secrets detected! Please remove them before committing."
+        exit 1
+    fi
+else
+    echo "⚠️ GitLeaks not installed. Skipping secrets check."
+fi
+
+# 2. Check for sensitive files
+echo "🔍 Checking for sensitive files..."
+sensitive_files=()
+
+if git diff --cached --name-only | grep -E "\.(env|key|pem|p12|pfx)$"; then
+    echo "❌ Sensitive files detected in commit:"
+    git diff --cached --name-only | grep -E "\.(env|key|pem|p12|pfx)$"
+    echo "Please remove these files from the commit."
+    exit 1
+fi
+
+if git diff --cached --name-only | grep -E "^config/user\.json$"; then
+    echo "❌ config/user.json should not be committed!"
+    echo "This file may contain sensitive API keys."
+    exit 1
+fi
+
+# 3. Run security linting
+echo "🔍 Running security linting..."
+npx eslint --config .eslintrc.security.js $(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(js|ts)$" | tr '\n' ' ')
+if [ $? -ne 0 ]; then
+    echo "❌ Security linting failed! Please fix the issues above."
+    exit 1
+fi
+
+# 4. Check for hardcoded API keys in staged files
+echo "🔍 Checking for hardcoded API keys..."
+staged_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(js|ts|json|yml|yaml)$")
+
+if [ -n "$staged_files" ]; then
+    # Check for common API key patterns
+    if echo "$staged_files" | xargs grep -l -E "(AIza[0-9A-Za-z_-]{35}|sk-[0-9A-Za-z]{48}|ghp_[0-9A-Za-z]{36})" 2>/dev/null; then
+        echo "❌ Potential API keys found in staged files!"
+        echo "Files with potential API keys:"
+        echo "$staged_files" | xargs grep -l -E "(AIza[0-9A-Za-z_-]{35}|sk-[0-9A-Za-z]{48}|ghp_[0-9A-Za-z]{36})" 2>/dev/null
+        echo "Please remove API keys and use environment variables instead."
+        exit 1
+    fi
+
+    # Check for placeholder values that should be replaced
+    if echo "$staged_files" | xargs grep -l "your_.*_here" 2>/dev/null; then
+        echo "⚠️ Placeholder values found in staged files:"
+        echo "$staged_files" | xargs grep -l "your_.*_here" 2>/dev/null
+        echo "Consider if these should be replaced with actual values or environment variables."
+    fi
+fi
+
+# 5. Run TypeScript type checking
+echo "🔍 Running TypeScript type checking..."
+npx tsc --noEmit
+if [ $? -ne 0 ]; then
+    echo "❌ TypeScript type checking failed!"
+    exit 1
+fi
+
+# 6. Run tests on staged files (if applicable)
+echo "🔍 Running tests..."
+npm test -- --passWithNoTests --findRelatedTests $(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(js|ts)$" | tr '\n' ' ')
+if [ $? -ne 0 ]; then
+    echo "❌ Tests failed!"
+    exit 1
+fi
+
+# 7. Check Docker security configuration (if Docker files are staged)
+if git diff --cached --name-only | grep -E "(Dockerfile|docker-compose|\.yml)$"; then
+    echo "🔍 Checking Docker security configuration..."
+    
+    # Check for security best practices in Docker files
+    docker_files=$(git diff --cached --name-only | grep -E "(Dockerfile|docker-compose.*\.yml)$")
+    
+    if [ -n "$docker_files" ]; then
+        for file in $docker_files; do
+            if [ -f "$file" ]; then
+                # Check for non-root user
+                if ! grep -q "user:" "$file" && ! grep -q "USER " "$file"; then
+                    echo "⚠️ $file: Consider running containers as non-root user"
+                fi
+                
+                # Check for security options
+                if grep -q "docker-compose" "$file" && ! grep -q "no-new-privileges" "$file"; then
+                    echo "⚠️ $file: Consider adding 'no-new-privileges:true' security option"
+                fi
+                
+                # Check for default passwords
+                if grep -q "password.*admin\|admin.*password" "$file"; then
+                    echo "❌ $file: Default passwords detected!"
+                    exit 1
+                fi
+            fi
+        done
+    fi
+fi
+
+# 8. Validate package.json security (if modified)
+if git diff --cached --name-only | grep -q "package\.json"; then
+    echo "🔍 Validating package.json security..."
+    
+    # Check for audit
+    npm audit --audit-level=high
+    if [ $? -ne 0 ]; then
+        echo "❌ High severity vulnerabilities found in dependencies!"
+        echo "Run 'npm audit fix' to resolve them."
+        exit 1
+    fi
+fi
+
+# 9. Check for TODO/FIXME comments in security-critical files
+echo "🔍 Checking for TODO/FIXME in security-critical files..."
+security_files=$(git diff --cached --name-only | grep -E "(security|auth|config|middleware)" | grep -E "\.(js|ts)$")
+
+if [ -n "$security_files" ]; then
+    todo_files=$(echo "$security_files" | xargs grep -l -E "(TODO|FIXME|XXX|HACK)" 2>/dev/null || true)
+    if [ -n "$todo_files" ]; then
+        echo "⚠️ TODO/FIXME comments found in security-critical files:"
+        echo "$todo_files"
+        echo "Please resolve these before committing to security-critical files."
+    fi
+fi
+
+# 10. Final security summary
+echo "✅ Pre-commit security checks completed successfully!"
+echo "📊 Checks performed:"
+echo "  - Secrets detection"
+echo "  - Sensitive files check"
+echo "  - Security linting"
+echo "  - API key detection"
+echo "  - TypeScript type checking"
+echo "  - Test execution"
+echo "  - Docker security validation"
+echo "  - Dependency audit"
+echo "  - Security-critical file review"
+
+echo "🚀 Ready to commit!"

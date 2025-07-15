@@ -1,0 +1,90 @@
+# Prometheus配置 - Open Search MCP v2.0 监控系统
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'open-search-mcp-v2'
+    environment: 'development'
+
+# 规则文件
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# 抓取配置
+scrape_configs:
+  # Prometheus自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    scrape_interval: 5s
+    metrics_path: /metrics
+
+  # Open Search MCP v2.0 主服务
+  - job_name: 'open-search-mcp-v2'
+    static_configs:
+      - targets: ['host.docker.internal:9091']  # 主应用监控端口
+    scrape_interval: 10s
+    metrics_path: /metrics
+    scrape_timeout: 5s
+
+  # Searx集群监控
+  - job_name: 'searx-cluster'
+    static_configs:
+      - targets: 
+          - 'searx-node-1:8080'
+          - 'searx-node-2:8080'
+          - 'searx-node-3:8080'
+    scrape_interval: 15s
+    metrics_path: /stats/errors
+    scrape_timeout: 10s
+    params:
+      format: ['json']
+
+  # Searx负载均衡器监控
+  - job_name: 'searx-loadbalancer'
+    static_configs:
+      - targets: ['searx-loadbalancer:8090']
+    scrape_interval: 10s
+    metrics_path: /nginx_status
+    scrape_timeout: 5s
+
+  # Redis集群监控
+  - job_name: 'redis-cluster'
+    static_configs:
+      - targets: 
+          - 'redis-master:6379'
+          - 'redis-slave:6379'
+    scrape_interval: 15s
+    metrics_path: /metrics
+    scrape_timeout: 5s
+
+  # Node Exporter (如果部署)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 15s
+    scrape_timeout: 5s
+
+  # Docker容器监控 (cAdvisor)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 15s
+    scrape_timeout: 5s
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# 远程写入配置（可选）
+# remote_write:
+#   - url: "http://remote-storage:9201/write"
+
+# 远程读取配置（可选）
+# remote_read:
+#   - url: "http://remote-storage:9201/read"

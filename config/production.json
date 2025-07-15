@@ -1,0 +1,48 @@
+{
+  "api": {
+    "timeouts": {
+      "default": 10000,
+      "search": 12000,
+      "download": 30000
+    },
+    "retries": {
+      "default": 3,
+      "search": 2,
+      "critical": 5
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "defaultTTL": 3600,
+    "maxSize": 2000,
+    "cleanupInterval": 300
+  },
+  "rateLimit": {
+    "enabled": true,
+    "windowMs": 60000,
+    "maxRequests": 100,
+    "skipSuccessfulRequests": false
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "file": "./logs/production.log",
+    "maxSize": "50m",
+    "maxFiles": 10
+  },
+  "security": {
+    "allowedOrigins": ["https://yourdomain.com"],
+    "corsEnabled": true
+  },
+  "performance": {
+    "maxConcurrentRequests": 10,
+    "requestTimeout": 30000,
+    "enableMetrics": true
+  },
+  "features": {
+    "enableAdvancedSearch": true,
+    "enableCaching": true,
+    "enableRateLimit": true,
+    "enableMetrics": true
+  }
+}

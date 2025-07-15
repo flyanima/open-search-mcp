@@ -1,0 +1,429 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache directories
+cache/
+.cache/
+.npm/
+.yarn/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.parcel-cache/
+
+# Next.js build output
+.next/
+
+# Nuxt.js build / generate output
+.nuxt/
+dist/
+
+# Gatsby files
+.cache/
+public/
+
+# Storybook build outputs
+.out/
+.storybook-out/
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Puppeteer
+.local-chromium/
+
+# Test artifacts
+test-results/
+playwright-report/
+test-results.xml
+
+# Local configuration
+config.local.json
+settings.local.json
+
+# API keys and secrets
+secrets.json
+api-keys.json
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.backup
+*.bak
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# IDE specific files
+*.sublime-project
+*.sublime-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# Package managers (excluding lock files for open source project)
+# package-lock.json  # Keep for dependency consistency
+yarn.lock
+pnpm-lock.yaml
+
+# Project specific - Open Search MCP
+downloads/
+cache/
+logs/
+
+# Private API keys backup (DO NOT COMMIT)
+PRIVATE_API_KEYS_BACKUP.md
+*_API_KEYS_*.md
+api-keys-backup.*
+
+# User-specific configuration files (SECURITY CRITICAL)
+config/user.json
+config/*.local.json
+config/personal.*
+config/private.*
+config/*-production.*
+config/*-prod.*
+
+# API Keys and Secrets (SECURITY CRITICAL)
+.env
+.env.*
+!.env.template
+!.env.example
+secrets.json
+api-keys.json
+*-secrets.*
+*-keys.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Security sensitive files
+security-audit.*
+vulnerability-report.*
+penetration-test.*
+
+# Open source preparation files (temporary)
+OPEN_SOURCE_CHECKLIST.md
+GITHUB_READY_VERIFICATION.md
+CLEANUP_COMPLETE_REPORT.md
+*_CHECKLIST.md
+*-checklist.md
+*_VERIFICATION.md
+*-verification.md
+*_REPORT.md
+*-report.md
+security-check.*
+precise-security-check.*
+final-test.*
+test-tools.*
+test-basic-tools.*
+test-offline-tools.*
+
+# Test files
+test-*.js
+test-*.ts
+*-test.js
+*-test.ts
+quick-*.js
+quick-*.cjs
+verify-*.js
+verify-*.cjs
+check-*.js
+check-*.cjs
+debug-*.js
+debug-*.cjs
+
+# Configuration backups
+claude-config-*.json
+*-config-backup.json
+claude-desktop-config-*.json
+
+# Status and monitoring files
+diagnostic-*.json
+status-*.json
+health-*.json
+monitoring-*.json
+api-status-*.json
+tools-*.json
+*-report.json
+*-results.json
+
+# Temporary documentation
+*-REPORT.md
+*-GUIDE.md
+*-PLAN.md
+*-STATUS.md
+*-SUMMARY.md
+*-ANALYSIS.md
+*_diagnostic_report.md
+*_analysis_*.md
+comprehensive_mcp_analysis*.md
+open_search_mcp_diagnostic_report.md
+
+# Context7 analysis files
+context7-analysis.*
+project-analysis.*
+*-context7.*
+
+# Development and testing artifacts
+tests/comprehensive_mcp_analysis*.md
+tests/*_diagnostic_*.md
+tests/*_report_*.md
+tests/temp-*
+tests/debug-*
+
+# MCP server variants (keep only main ones)
+*-server.cjs
+*-mcp-server.js
+ultimate-server.*
+working-server.*
+production-server.*
+debug-server.*
+minimal-server.*
+simple-server.*
+organized-server.*
+series-server.*
+silent-server.*
+
+# Build and deployment artifacts (Context7 recommended exclusions)
+dist/
+build/
+*.tsbuildinfo
+
+# Package manager files (optional - some projects keep these)
+# Uncomment if you don't want to track lock files
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# IDE and editor specific files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/extensions.json
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Backup and temporary files
+*.backup
+*.bak
+*.tmp
+*.temp
+*~
+*.swp
+*.swo
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache directories
+.cache/
+.npm/
+.yarn/
+cache/
+node_modules/.cache/
+
+# Environment and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+secrets.json
+api-keys.json
+
+# Coverage and test results
+coverage/
+*.lcov
+.nyc_output/
+test-results/
+playwright-report/
+test-results.xml
+
+# Temporary folders
+tmp/
+temp/
+downloads/
+
+# Project specific temporary files
+*-temp.*
+*-temporary.*
+temp-*
+temporary-*
+scratch.*
+draft-*
+wip-*
+work-in-progress-*
+
+# Documentation drafts and temporary docs
+docs/temp/
+docs/draft/
+docs/*-draft.*
+docs/*-temp.*
+docs/wip-*
+
+# Scripts and tools for development only
+scripts/temp-*
+scripts/debug-*
+scripts/test-*
+scripts/dev-*
+scripts/local-*
+scripts/personal-*
+
+# Monitoring and diagnostic files
+monitoring/
+diagnostics/
+health-checks/
+status-reports/
+performance-logs/

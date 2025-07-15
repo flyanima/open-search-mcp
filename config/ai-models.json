@@ -1,0 +1,199 @@
+{
+  "ai": {
+    "enabled": true,
+    "defaultModel": "llama3.2",
+    "fallbackEnabled": true,
+    "maxRetries": 3,
+    "timeout": 30000,
+    "models": {
+      "llama3.2": {
+        "provider": "ollama",
+        "endpoint": "http://localhost:11434",
+        "model": "llama3.2:latest",
+        "temperature": 0.7,
+        "maxTokens": 4096,
+        "contextWindow": 8192,
+        "capabilities": [
+          "query_optimization",
+          "content_summarization",
+          "entity_extraction",
+          "sentiment_analysis"
+        ],
+        "specialization": "general",
+        "languages": ["en", "zh", "es", "fr", "de"],
+        "performance": {
+          "speed": "medium",
+          "quality": "high",
+          "memoryUsage": "4GB"
+        }
+      },
+      "qwen2.5": {
+        "provider": "ollama",
+        "endpoint": "http://localhost:11434",
+        "model": "qwen2.5:latest",
+        "temperature": 0.6,
+        "maxTokens": 2048,
+        "contextWindow": 4096,
+        "capabilities": [
+          "query_optimization",
+          "content_summarization",
+          "multilingual_translation",
+          "chinese_processing"
+        ],
+        "specialization": "multilingual",
+        "languages": ["zh", "en", "ja", "ko", "th", "vi"],
+        "performance": {
+          "speed": "fast",
+          "quality": "high",
+          "memoryUsage": "3GB"
+        }
+      },
+      "mistral": {
+        "provider": "ollama",
+        "endpoint": "http://localhost:11434",
+        "model": "mistral:latest",
+        "temperature": 0.5,
+        "maxTokens": 2048,
+        "contextWindow": 4096,
+        "capabilities": [
+          "query_optimization",
+          "content_analysis",
+          "fact_checking"
+        ],
+        "specialization": "analysis",
+        "languages": ["en", "fr", "es", "de"],
+        "performance": {
+          "speed": "fast",
+          "quality": "medium",
+          "memoryUsage": "2GB"
+        }
+      },
+      "codellama": {
+        "provider": "ollama",
+        "endpoint": "http://localhost:11434",
+        "model": "codellama:latest",
+        "temperature": 0.3,
+        "maxTokens": 4096,
+        "contextWindow": 8192,
+        "capabilities": [
+          "code_analysis",
+          "technical_summarization",
+          "api_documentation"
+        ],
+        "specialization": "technical",
+        "languages": ["en"],
+        "performance": {
+          "speed": "medium",
+          "quality": "high",
+          "memoryUsage": "5GB"
+        }
+      }
+    },
+    "fallback": {
+      "provider": "huggingface",
+      "endpoint": "https://api-inference.huggingface.co",
+      "models": {
+        "summarization": "facebook/bart-large-cnn",
+        "sentiment": "cardiffnlp/twitter-roberta-base-sentiment-latest",
+        "translation": "Helsinki-NLP/opus-mt-en-zh",
+        "embedding": "sentence-transformers/all-MiniLM-L6-v2"
+      },
+      "rateLimit": {
+        "requestsPerMinute": 100,
+        "requestsPerHour": 1000
+      }
+    }
+  },
+  "processing": {
+    "queryOptimization": {
+      "enabled": true,
+      "maxExpansions": 5,
+      "synonymThreshold": 0.8,
+      "enableSemanticExpansion": true,
+      "languages": ["en", "zh"]
+    },
+    "contentAnalysis": {
+      "enabled": true,
+      "enableSummarization": true,
+      "enableEntityExtraction": true,
+      "enableSentimentAnalysis": true,
+      "enableKeywordExtraction": true,
+      "maxSummaryLength": 500,
+      "summaryStyle": "extractive"
+    },
+    "qualityAssessment": {
+      "enabled": true,
+      "factors": {
+        "relevance": 0.4,
+        "authority": 0.3,
+        "freshness": 0.2,
+        "completeness": 0.1
+      },
+      "minimumScore": 0.6,
+      "enableCredibilityCheck": true
+    }
+  },
+  "embedding": {
+    "enabled": true,
+    "provider": "local",
+    "model": "sentence-transformers/all-MiniLM-L6-v2",
+    "dimensions": 384,
+    "batchSize": 32,
+    "cache": {
+      "enabled": true,
+      "maxSize": 10000,
+      "ttl": 86400
+    }
+  },
+  "vectorDatabase": {
+    "provider": "chroma",
+    "host": "localhost",
+    "port": 8000,
+    "collections": {
+      "search_results": {
+        "distance": "cosine",
+        "metadata": ["url", "title", "timestamp", "source"]
+      },
+      "pdf_documents": {
+        "distance": "cosine",
+        "metadata": ["title", "authors", "doi", "publication_date"]
+      }
+    }
+  },
+  "performance": {
+    "concurrency": {
+      "maxConcurrentRequests": 10,
+      "maxConcurrentAnalysis": 5,
+      "queueTimeout": 60000
+    },
+    "caching": {
+      "enableQueryCache": true,
+      "enableResultCache": true,
+      "queryTtl": 3600,
+      "resultTtl": 86400,
+      "maxCacheSize": "1GB"
+    },
+    "optimization": {
+      "enableBatching": true,
+      "batchSize": 10,
+      "enableStreaming": true,
+      "enableCompression": true
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics": {
+      "responseTime": true,
+      "accuracy": true,
+      "cacheHitRate": true,
+      "errorRate": true,
+      "resourceUsage": true
+    },
+    "logging": {
+      "level": "info",
+      "enableAILogs": true,
+      "enablePerformanceLogs": true,
+      "logRotation": true
+    }
+  }
+}
