@@ -36,65 +36,40 @@ import { MetricsCollector } from './utils/metrics.js';
 import { z } from 'zod';
 import { InputValidator } from './utils/input-validator.js';
 
-// Import ONLY real API tool categories (no mock/simulation tools)
+// Import only the CORE 33 tools as documented in README
+// 🎓 Academic Research (7 tools)
 import { registerAcademicTools } from './tools/academic/simple.js';
-import { registerWebTools } from './tools/web/simple.js';
-import { registerGoogleTools } from './tools/web/google-tools.js';
-import { registerPDFResearchTools } from './tools/pdf/research.js';
-import { registerAlphaVantageTools } from './tools/financial/alpha-vantage-tools.js';
-import { registerNewsAPITools } from './tools/news/newsapi-tools.js';
-import { registerGitHubAPITools } from './tools/tech/github-api-tools.js';
-import { registerOpenWeatherTools } from './tools/weather/openweather-tools.js';
-// import { registerAPIHealthCheckTools } from './tools/monitoring/api-health-check.js'; // Removed
-import { registerRedditAPITools } from './tools/social/reddit-api-tools.js';
-import { registerEnhancedRedditTools } from './tools/social/enhanced-reddit-tools.js';
-import { registerCoinGeckoTools } from './tools/financial/coingecko-tools.js';
-import { registerSmartSearchTools } from './tools/aggregation/smart-search-tools.js';
-import { registerHuggingFaceTools } from './tools/ai/huggingface-tools.js';
-import { registerIntegrityCheckTools } from './tools/system/integrity-check-tools.js';
-import { registerSmartAPIRouter } from './tools/routing/smart-api-router.js';
-import { registerWikipediaTools } from './tools/knowledge/wikipedia-api-tools.js';
-import { registerOpenLibraryTools } from './tools/knowledge/openlibrary-tools.js';
-import { registerJSONPlaceholderTools } from './tools/testing/jsonplaceholder-tools.js';
-import { registerSmartAPIManager } from './tools/management/smart-api-manager.js';
-// import { registerCoinGeckoTools } from './tools/crypto/register-coingecko-tools.js'; // Removed
-
-// Import new tool modules for 93-tool system
-import { registerYouTubeTools } from './tools/video/youtube-tools.js';
-import { registerStackOverflowTools } from './tools/tech/stackoverflow-tools.js';
 import { registerPubMedTools } from './tools/academic/pubmed-tools.js';
 import { registerIEEETools } from './tools/academic/ieee-tools.js';
-import { registerTwitterLinkedInTools } from './tools/social/twitter-linkedin-tools.js';
-import { registerUtilityTools } from './tools/utility/utility-tools.js';
-
-// Import newly created tools
 import { registerSemanticScholarTools } from './tools/academic/semantic-scholar-tools.js';
-import { registerGitHubTools } from './tools/development/github-tools.js';
-// import { registerTestTools } from './tools/testing/test-tools.js'; // Removed
 import { registerBioRxivTools } from './tools/academic/biorxiv-tools.js';
 
-// Import "pending implementation" tools
-import { registerWebCrawlerTools } from './tools/utility/web-crawler-tools.js';
+// 💻 Developer Tools (4 tools)
+import { registerGitHubAPITools } from './tools/tech/github-api-tools.js';
+import { registerStackOverflowTools } from './tools/tech/stackoverflow-tools.js';
+import { registerGitLabBitbucketTools } from './tools/tech/gitlab-bitbucket-tools.js';
+
+// 🔍 Privacy-Focused Search (4 tools)
+import { registerAlternativeSearchEngines } from './tools/search/alternative-search-engines.js';
 import { registerSearxTools } from './tools/search/searx-tools.js';
 
-// Import monitoring tools
-// import { registerHealthMonitorTools } from './tools/monitoring/health-monitor-tools.js'; // Removed
+// 🧪 Testing & Development (2 tools)
+import { registerJSONPlaceholderTools } from './tools/testing/jsonplaceholder-tools.js';
 
-// Import alternative search engines and thinking analysis tools
-import { registerAlternativeSearchEngines } from './tools/search/alternative-search-engines.js';
+// 🕷️ Web Crawling (2 tools)
+import { registerWebCrawlerTools } from './tools/utility/web-crawler-tools.js';
+
+// 📄 Document Processing (1 tool)
+import { registerPDFResearchTools } from './tools/pdf/research.js';
+
+// 🧠 Intelligent Research (5 tools)
+import { registerSmartSearchTools } from './tools/aggregation/smart-search-tools.js';
 import { registerThinkingAnalysisTools } from './tools/research/thinking-analysis-tools.js';
 
-// Removed register imports - using individual tool imports instead
+// 💰 Financial Tools (8 tools)
+import { registerAlphaVantageTools } from './tools/financial/alpha-vantage-tools.js';
 
-// Removed more register imports
 
-// Removed remaining register imports
-
-// Removed intelligent decomposed research tools import
-
-// Import debug tools (only in development)
-// import { ocrHealthCheckTool, executeOCRHealthCheck } from './tools/debug/ocr-health-check.js'; // Removed from production
-// import { ErrorTracker } from './monitoring/error-tracker.js'; // Removed
 
 class OpenSearchMCPServer {
   private server: Server;
@@ -140,7 +115,7 @@ class OpenSearchMCPServer {
     );
 
     this.setupHandlers();
-    this.registerAllTools();
+    // Note: registerAllTools() is now called in start() method
 
     // Register debug tools only in development
     if (process.env.NODE_ENV === 'development') {
@@ -247,130 +222,58 @@ class OpenSearchMCPServer {
     });
   }
 
-  private registerAllTools(): void {
-    this.logger.info('Registering all REAL API tools...');
+  private async registerAllTools(): Promise<void> {
+    this.logger.info('Registering exactly 33 specialized tools...');
 
-    // ONLY REGISTER REAL API TOOLS - NO MOCK/SIMULATION TOOLS
-    // This ensures all tools provide actual data from real APIs
+    // 🎓 Academic Research (7 tools)
+    registerAcademicTools(this.toolRegistry);           // 1 tool: search_arxiv
+    registerPubMedTools(this.toolRegistry);             // 1 tool: search_pubmed
+    registerIEEETools(this.toolRegistry);               // 1 tool: search_ieee
+    registerSemanticScholarTools(this.toolRegistry);    // 1 tool: search_semantic_scholar
+    registerBioRxivTools(this.toolRegistry);            // 3 tools: search_iacr, search_medrxiv, search_biorxiv
 
-    // Google Search Tools (5 tools) - CRITICAL FOR API FUNCTIONALITY
-    registerGoogleTools(this.toolRegistry);
+    // 💻 Developer Tools (4 tools)
+    registerGitHubAPITools(this.toolRegistry);          // 1 tool: search_github
+    registerStackOverflowTools(this.toolRegistry);      // 1 tool: search_stackoverflow
+    registerGitLabBitbucketTools(this.toolRegistry);    // 2 tools: search_gitlab, search_bitbucket
 
-    // Alpha Vantage Financial Tools (5 tools) - CRITICAL FOR FINANCIAL DATA
-    registerAlphaVantageTools(this.toolRegistry);
+    // 🔍 Privacy-Focused Search (4 tools)
+    registerAlternativeSearchEngines(this.toolRegistry); // 3 tools: search_startpage, search_brave, search_ecosia
+    registerSearxTools(this.toolRegistry);              // 1 tool: search_searx
 
-    // NewsAPI Tools (4 tools) - CRITICAL FOR NEWS DATA
-    registerNewsAPITools(this.toolRegistry);
+    // 🧪 Testing & Development (2 tools)
+    registerJSONPlaceholderTools(this.toolRegistry);    // 2 tools: test_jsonplaceholder, test_httpbin
 
-    // GitHub API Tools (4 tools) - CRITICAL FOR TECH DATA
-    registerGitHubAPITools(this.toolRegistry);
+    // 🕷️ Web Crawling (2 tools)
+    registerWebCrawlerTools(this.toolRegistry);         // 2 tools: crawl_url_content, batch_crawl_urls
 
-    // OpenWeather Tools (4 tools) - CRITICAL FOR WEATHER DATA
-    registerOpenWeatherTools(this.toolRegistry);
+    // 📄 Document Processing (1 tool)
+    registerPDFResearchTools(this.toolRegistry);        // 1 tool: analyze_pdf
 
-    // Reddit API Tools (4 tools) - CRITICAL FOR SOCIAL DATA
-    registerRedditAPITools(this.toolRegistry);
+    // 🧠 Intelligent Research (6 tools)
+    registerSmartSearchTools(this.toolRegistry);        // 2 tools: intelligent_research, market_intelligence_aggregator
+    registerThinkingAnalysisTools(this.toolRegistry);   // 4 tools: deep_research, visualize_thinking, decompose_thinking, check_research_saturation
 
-    // Enhanced Reddit Tools (4 tools) - BACKUP FOR SOCIAL DATA
-    registerEnhancedRedditTools(this.toolRegistry);
-
-    // CoinGecko Tools (6 tools) - CRITICAL FOR CRYPTO DATA
-    registerCoinGeckoTools(this.toolRegistry);
-
-    // Hugging Face Tools (5 tools) - CRITICAL FOR AI DATA
-    registerHuggingFaceTools(this.toolRegistry);
-
-    // System Integrity Tools (3 tools) - CRITICAL FOR MONITORING
-    registerIntegrityCheckTools(this.toolRegistry);
-
-    // Smart API Router (2 tools) - CRITICAL FOR INTELLIGENCE
-    registerSmartAPIRouter(this.toolRegistry);
-
-    // Wikipedia Tools (5 tools) - RELIABLE KNOWLEDGE SOURCE
-    registerWikipediaTools(this.toolRegistry);
-
-    // OpenLibrary Tools (5 tools) - BOOK AND LITERATURE DATA
-    registerOpenLibraryTools(this.toolRegistry);
-
-    // JSONPlaceholder Tools (5 tools) - RELIABLE TEST DATA
-    registerJSONPlaceholderTools(this.toolRegistry);
-
-    // Smart API Manager (4 tools) - INTELLIGENT API MANAGEMENT
-    registerSmartAPIManager(this.toolRegistry);
-
-    // Smart Search Aggregation Tools (2 tools) - CRITICAL FOR INTELLIGENCE
-    registerSmartSearchTools(this.toolRegistry);
-
-    // Real Academic Tools (with actual arXiv/PubMed API calls)
-    registerAcademicTools(this.toolRegistry);
-
-    // Real Web Search Tools (with actual Wikipedia API calls)
-    registerWebTools(this.toolRegistry);
-
-    // NOTE: Removed all mock/simulation tools to prevent conflicts with real APIs
-    // Only real API tools with actual data sources are registered above
-    // This ensures 100% real data responses from all tools
-
-    // API Health Check Tools (3 tools) - CRITICAL FOR MONITORING
-    // registerAPIHealthCheckTools(this.toolRegistry); // Removed
-
-    // NEW TOOLS FOR 93-TOOL SYSTEM COMPLETION
-
-    // YouTube Video Platform Tools (3 tools) - VIDEO CONTENT SEARCH
-    registerYouTubeTools(this.toolRegistry);
-
-    // Stack Overflow Developer Tools (3 tools) - DEVELOPER Q&A
-    registerStackOverflowTools(this.toolRegistry);
-
-    // PubMed Medical Research Tools (3 tools) - MEDICAL LITERATURE
-    registerPubMedTools(this.toolRegistry);
-
-    // IEEE Academic Tools (3 tools) - ENGINEERING RESEARCH
-    registerIEEETools(this.toolRegistry);
-
-    // Twitter & LinkedIn Social Tools (3 tools) - SOCIAL MEDIA
-    registerTwitterLinkedInTools(this.toolRegistry);
-
-    // Utility Tools (3 tools) - DATA PROCESSING & CONVERSION
-    registerUtilityTools(this.toolRegistry);
-
-    // NEWLY CREATED TOOLS TO FIX FUNCTION UNDEFINED ERRORS
-
-    // Semantic Scholar Academic Tools (3 tools) - ACADEMIC RESEARCH
-    registerSemanticScholarTools(this.toolRegistry);
-
-    // GitHub Developer Tools (3 tools) - CODE REPOSITORY SEARCH
-    registerGitHubTools(this.toolRegistry);
-
-    // Testing Tools (5 tools) - API TESTING & VALIDATION
-    // registerTestTools(this.toolRegistry); // Removed
-
-    // bioRxiv Academic Tools (2 tools) - BIOLOGY PREPRINTS
-    registerBioRxivTools(this.toolRegistry);
-
-    // Web Crawler Tools (2 tools) - WEB CONTENT EXTRACTION
-    registerWebCrawlerTools(this.toolRegistry);
-
-    // Searx Search Tools (3 tools) - PRIVACY-FOCUSED SEARCH
-    registerSearxTools(this.toolRegistry);
-
-    // Health Monitor Tools (5 tools) - API HEALTH MONITORING
-    // registerHealthMonitorTools(this.toolRegistry); // Removed
-
-    // Alternative Search Engines (3 tools) - PRIVACY & ECO-FRIENDLY SEARCH
-    registerAlternativeSearchEngines(this.toolRegistry);
-
-    // Thinking Analysis Tools (3 tools) - DEEP RESEARCH & ANALYSIS
-    registerThinkingAnalysisTools(this.toolRegistry);
-
-    // Removed missing register function calls - these files were deleted
+    // 💰 Financial Tools (8 tools)
+    registerAlphaVantageTools(this.toolRegistry);       // 8 tools: Alpha Vantage Integration
 
     const totalTools = this.toolRegistry.getToolCount();
-    this.logger.info(`Successfully registered ${totalTools} search tools`);
-    
-    if (totalTools < 200) {
-      this.logger.warn(`Only ${totalTools} tools registered. Target is 200+ for optimal Function Calling performance.`);
+    this.logger.info(`Successfully registered ${totalTools} tools`);
+
+    // Filter to README 33 tools if environment variable is set
+    if (process.env.FILTER_TO_README_33 === 'true') {
+      await this.filterToReadme33Tools();
     }
+
+    const finalToolCount = this.toolRegistry.getToolCount();
+    const expectedCount = process.env.FILTER_TO_README_33 === 'true' ? 33 : 34;
+
+    if (finalToolCount !== expectedCount) {
+      this.logger.warn(`Expected ${expectedCount} tools, but registered ${finalToolCount}. Please check tool registrations.`);
+    }
+
+
+
   }
 
   /**
@@ -385,25 +288,7 @@ class OpenSearchMCPServer {
 
     this.logger.info('Registering debug tools for development...');
 
-    try {
-      // Dynamically import debug tools only in development
-      import('./tools/debug/ocr-health-check.js').then(({ ocrHealthCheckTool, executeOCRHealthCheck }) => {
-        this.toolRegistry.registerTool({
-          name: ocrHealthCheckTool.name,
-          description: ocrHealthCheckTool.description || 'OCR Health Check Tool (Development Only)',
-          category: 'debug',
-          source: 'internal',
-          inputSchema: ocrHealthCheckTool.inputSchema as any,
-          execute: executeOCRHealthCheck
-        });
-
-        this.logger.info('Debug tools registered successfully');
-      }).catch(error => {
-        this.logger.warn('Failed to load debug tools', error);
-      });
-    } catch (error) {
-      this.logger.warn('Debug tools not available', error);
-    }
+    // Debug tools removed for production build
   }
 
   /**
@@ -464,10 +349,66 @@ class OpenSearchMCPServer {
     }
   }
 
+  private async filterToReadme33Tools(): Promise<void> {
+    this.logger.info('Filtering to README 33 tools only...');
+
+    // Define the exact 33 tools from README.md
+    const README_33_TOOLS = [
+      // Academic Research (7 tools)
+      'search_arxiv', 'search_pubmed', 'search_ieee', 'search_semantic_scholar',
+      'search_iacr', 'search_biorxiv', 'search_medrxiv',
+
+      // Developer Tools (4 tools)
+      'search_github', 'search_stackoverflow', 'search_gitlab', 'search_bitbucket',
+
+      // Privacy-Focused Search (4 tools)
+      'search_searx', 'search_startpage', 'search_brave', 'search_ecosia',
+
+      // Testing & Development (2 tools)
+      'test_jsonplaceholder', 'test_httpbin',
+
+      // Web Crawling (2 tools)
+      'crawl_url_content', 'batch_crawl_urls',
+
+      // Document Processing (1 tool)
+      'analyze_pdf',
+
+      // Intelligent Research (5 tools)
+      'intelligent_research', 'deep_research', 'visualize_thinking',
+      'decompose_thinking', 'check_research_saturation',
+
+      // Financial Tools (8 tools)
+      'alpha_vantage_symbol_search', 'alpha_vantage_stock_quote', 'alpha_vantage_intraday_data',
+      'alpha_vantage_daily_data', 'alpha_vantage_company_overview', 'alpha_vantage_forex_rate',
+      'alpha_vantage_crypto_price', 'alpha_vantage_market_news'
+    ];
+
+    const allTools = this.toolRegistry.getAllTools();
+    const toolsToRemove = allTools.filter(tool => !README_33_TOOLS.includes(tool.name));
+
+    this.logger.info(`Removing ${toolsToRemove.length} extra tools to keep only README 33...`);
+    for (const tool of toolsToRemove) {
+      this.toolRegistry.removeTool(tool.name);
+    }
+
+    const finalTools = this.toolRegistry.getAllTools();
+    const finalToolNames = finalTools.map(t => t.name);
+    const missingTools = README_33_TOOLS.filter(name => !finalToolNames.includes(name));
+
+    if (missingTools.length > 0) {
+      this.logger.warn(`Missing README tools: ${missingTools.join(', ')}`);
+    }
+
+    this.logger.info(`✅ Filtered to ${finalTools.length} README tools`);
+  }
+
   async start(): Promise<void> {
     try {
       // Initialize all components
       await this.initialize();
+
+      // Register all tools
+      await this.registerAllTools();
 
       // Setup global error handlers
       this.setupGlobalErrorHandlers();
@@ -658,16 +599,7 @@ class OpenSearchMCPServer {
       tools: tools.map(tool => ({
         name: tool.name,
         description: tool.description,
-        inputSchema: tool.inputSchema || {
-          type: 'object',
-          properties: {
-            query: {
-              type: 'string',
-              description: 'Search query'
-            }
-          },
-          required: ['query']
-        }
+        inputSchema: tool.inputSchema
       }))
     };
   }

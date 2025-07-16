@@ -110,7 +110,7 @@ export function registerGitHubAPITools(registry: ToolRegistry): void {
 
   // 1. 仓库搜索
   registry.registerTool({
-    name: 'github_repository_search',
+    name: 'search_github',
     description: 'Search GitHub repositories with advanced filtering',
     category: 'tech',
     source: 'github.com',

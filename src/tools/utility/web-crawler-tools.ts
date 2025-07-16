@@ -182,7 +182,7 @@ export function registerWebCrawlerTools(registry: ToolRegistry): void {
 
   // 单页面爬虫工具
   registry.registerTool({
-    name: 'web_crawler_single',
+    name: 'crawl_url_content',
     description: 'Crawl and extract content from a single web page',
     category: 'utility',
     source: 'Web Crawler',
@@ -290,7 +290,7 @@ export function registerWebCrawlerTools(registry: ToolRegistry): void {
 
   // 多页面爬虫工具
   registry.registerTool({
-    name: 'web_crawler_multiple',
+    name: 'batch_crawl_urls',
     description: 'Crawl and extract content from multiple web pages',
     category: 'utility',
     source: 'Web Crawler',

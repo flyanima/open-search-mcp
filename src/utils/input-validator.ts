@@ -234,6 +234,11 @@ export class InputValidator {
       'search_brave': ToolSchemas.basicSearch,
       'search_ecosia': ToolSchemas.basicSearch,
 
+      // Searx tools
+      'searx_search': ToolSchemas.basicSearch,
+      'searx_image_search': ToolSchemas.basicSearch,
+      'searx_news_search': ToolSchemas.basicSearch,
+
       // Developer tools
       'search_github': ToolSchemas.githubSearch,
       'search_stackoverflow': ToolSchemas.basicSearch,
@@ -252,15 +257,36 @@ export class InputValidator {
       // Crawling tools
       'crawl_url_content': ToolSchemas.urlCrawl,
       'batch_crawl_urls': ToolSchemas.batchUrlCrawl,
+      'web_crawler_single': ToolSchemas.urlCrawl,
+      'web_crawler_multiple': ToolSchemas.batchUrlCrawl,
 
       // PDF tools
       'analyze_pdf': ToolSchemas.pdfAnalysis,
+
+      // JSONPlaceholder tools (don't require query parameter)
+      'jsonplaceholder_posts': z.object({
+        limit: z.number().int().min(1).max(100).optional().default(10)
+      }),
+      'jsonplaceholder_users': z.object({
+        limit: z.number().int().min(1).max(10).optional().default(5)
+      }),
+      'jsonplaceholder_comments': z.object({
+        postId: z.number().int().min(1).max(100).optional(),
+        limit: z.number().int().min(1).max(100).optional().default(10)
+      }),
+      'jsonplaceholder_albums': z.object({
+        userId: z.number().int().min(1).max(10).optional(),
+        limit: z.number().int().min(1).max(100).optional().default(10)
+      }),
+      'jsonplaceholder_health_test': z.object({
+        endpoints: z.array(z.enum(['posts', 'users', 'comments', 'albums', 'photos', 'todos'])).optional()
+      }),
     };
 
     const schema = schemaMap[toolName];
     if (!schema) {
-      // Fallback to basic validation for unknown tools
-      return this.validate(input, ToolSchemas.basicSearch);
+      // For unknown tools, allow any input (return as-is)
+      return { success: true, data: input };
     }
 
     return this.validate(input, schema);

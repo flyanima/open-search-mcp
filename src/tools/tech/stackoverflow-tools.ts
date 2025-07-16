@@ -8,7 +8,7 @@ import { ToolRegistry } from '../tool-registry.js';
 export function registerStackOverflowTools(registry: ToolRegistry): void {
   // Stack Overflow问题搜索
   registry.registerTool({
-    name: 'stackoverflow_search',
+    name: 'search_stackoverflow',
     description: 'Search Stack Overflow questions and answers',
     category: 'tech',
     source: 'Stack Overflow',

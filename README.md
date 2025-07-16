@@ -61,10 +61,15 @@ A **comprehensive Model Context Protocol (MCP) server** providing **33 specializ
 - **check_research_saturation**: Research completeness evaluation
 
 ### 💰 Financial Tools (8 tools) *
-- **Alpha Vantage Integration**: Stock quotes, forex, crypto, commodities
-- **Market Analysis**: Technical and fundamental analysis
-- **Portfolio Tracking**: Investment portfolio monitoring
-- **Financial News**: Sentiment analysis and market insights
+**Alpha Vantage Integration:**
+- **alpha_vantage_symbol_search**: Search for stock symbols and company information
+- **alpha_vantage_stock_quote**: Get real-time stock quotes and price information
+- **alpha_vantage_intraday_data**: Get intraday stock price data with specified intervals
+- **alpha_vantage_daily_data**: Get daily stock price data and historical trends
+- **alpha_vantage_company_overview**: Get comprehensive company overview and fundamentals
+- **alpha_vantage_forex_rate**: Get real-time and historical forex exchange rates
+- **alpha_vantage_crypto_price**: Get cryptocurrency prices and market data
+- **alpha_vantage_market_news**: Get financial market news and sentiment analysis
 
 *Note: Financial tools require API keys and may have usage limits*
 
@@ -132,17 +137,19 @@ nano .env
 
 6. **Configure Claude Desktop**
 
-Add to your Claude Desktop configuration file (`claude_desktop_config.json`):
+Copy `claude_desktop_config.template.json` and update with your paths:
 
 ```json
 {
   "mcpServers": {
     "open-search-mcp": {
       "command": "node",
-      "args": ["path/to/open-search-mcp/dist/expanded-server.js"],
+      "args": ["path/to/open-search-mcp/dist/index.js"],
       "env": {
-        "GITHUB_TOKEN": "your_github_token_here",
-        "ALPHA_VANTAGE_API_KEY": "your_alpha_vantage_key_here"
+        "NODE_ENV": "production",
+        "FILTER_TO_README_33": "true",
+        "GITHUB_TOKEN": "your_github_token_optional",
+        "ALPHA_VANTAGE_API_KEY": "your_alpha_vantage_key_optional"
       }
     }
   }

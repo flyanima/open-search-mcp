@@ -1,7 +1,7 @@
 {
   "name": "open-search-mcp",
   "version": "2.0.0",
-  "description": "A free and open-source Model Context Protocol server for web search, academic research, and content extraction. Provides real-time search capabilities without relying on paid third-party APIs.",
+  "description": "A comprehensive Model Context Protocol server providing 33 specialized research and search tools for Claude Desktop. Includes academic search, developer tools, privacy-focused search, and financial data APIs.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./src/index.ts",

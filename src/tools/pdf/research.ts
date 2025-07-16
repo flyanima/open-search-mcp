@@ -341,7 +341,7 @@ export function registerPDFResearchTools(registry: ToolRegistry): void {
 
   // PDF Research tool
   const pdfResearchTool = createTool(
-    'pdf_research',
+    'analyze_pdf',
     'Conduct comprehensive PDF research with document discovery, processing, and analysis',
     'pdf',
     'pdf-research',

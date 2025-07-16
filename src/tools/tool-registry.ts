@@ -10,7 +10,7 @@ import { Logger } from '../utils/logger.js';
 import { SearchOptions, ToolInput, ToolOutput } from '../types.js';
 
 // Import debug tools
-import { ocrHealthCheckTool, executeOCRHealthCheck } from './debug/ocr-health-check.js';
+// import { ocrHealthCheckTool, executeOCRHealthCheck } from './debug/ocr-health-check.js'; // Removed
 
 export interface MCPTool {
   name: string;

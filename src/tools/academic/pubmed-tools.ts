@@ -157,7 +157,7 @@ export function registerPubMedTools(registry: ToolRegistry): void {
 
   // PubMed文献搜索
   registry.registerTool({
-    name: 'pubmed_search',
+    name: 'search_pubmed',
     description: 'Search PubMed for medical and life science literature',
     category: 'academic',
     source: 'PubMed',

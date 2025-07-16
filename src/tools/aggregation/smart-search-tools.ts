@@ -59,7 +59,7 @@ function rankAndDeduplicateResults(results: any[], query: string): any[] {
 export function registerSmartSearchTools(registry: ToolRegistry): void {
   // 1. 智能综合搜索
   registry.registerTool({
-    name: 'smart_comprehensive_search',
+    name: 'intelligent_research',
     description: 'Intelligent search across multiple sources with smart ranking and deduplication',
     category: 'aggregation',
     source: 'multiple',

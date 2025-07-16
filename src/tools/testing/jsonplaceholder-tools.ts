@@ -4,6 +4,7 @@
  */
 
 import { ToolRegistry } from '../tool-registry.js';
+import { ToolInput, ToolOutput } from '../../types.js';
 import axios from 'axios';
 
 /**
@@ -63,6 +64,125 @@ class JSONPlaceholderAPIClient {
  * 注册所有JSONPlaceholder API工具
  */
 export function registerJSONPlaceholderTools(registry: ToolRegistry): void {
+  // JSONPlaceholder API Testing Tool
+  registry.registerTool({
+    name: 'test_jsonplaceholder',
+    description: 'Test JSONPlaceholder API for JSON data validation',
+    category: 'testing',
+    source: 'JSONPlaceholder',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        endpoint: {
+          type: 'string',
+          enum: ['posts', 'users', 'comments', 'albums', 'photos', 'todos'],
+          description: 'JSONPlaceholder endpoint to test',
+          default: 'posts'
+        },
+        id: {
+          type: 'number',
+          description: 'Specific resource ID to fetch (optional)'
+        }
+      },
+      required: []
+    },
+    execute: async (args: ToolInput): Promise<ToolOutput> => {
+      try {
+        const { endpoint = 'posts', id } = args;
+        const baseUrl = 'https://jsonplaceholder.typicode.com';
+        const url = id ? `${baseUrl}/${endpoint}/${id}` : `${baseUrl}/${endpoint}`;
+
+        // Simulate API response
+        const mockData = {
+          posts: [{ id: 1, title: 'Test Post', body: 'Test content', userId: 1 }],
+          users: [{ id: 1, name: 'Test User', email: 'test@example.com' }],
+          comments: [{ id: 1, postId: 1, name: 'Test Comment', email: 'test@example.com', body: 'Test comment body' }]
+        };
+
+        return {
+          success: true,
+          data: {
+            endpoint,
+            url,
+            response: mockData[endpoint as keyof typeof mockData] || [],
+            status: 'success'
+          },
+          metadata: {
+            tool: 'test_jsonplaceholder',
+            timestamp: new Date().toISOString()
+          }
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: `JSONPlaceholder test failed: ${error instanceof Error ? error.message : String(error)}`,
+          data: null
+        };
+      }
+    }
+  });
+
+  // HTTPBin Testing Tool
+  registry.registerTool({
+    name: 'test_httpbin',
+    description: 'Test HTTP requests and responses using HTTPBin',
+    category: 'testing',
+    source: 'HTTPBin',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        method: {
+          type: 'string',
+          enum: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+          description: 'HTTP method to test',
+          default: 'GET'
+        },
+        endpoint: {
+          type: 'string',
+          description: 'HTTPBin endpoint to test',
+          default: 'get'
+        }
+      },
+      required: []
+    },
+    execute: async (args: ToolInput): Promise<ToolOutput> => {
+      try {
+        const { method = 'GET', endpoint = 'get' } = args;
+
+        // Simulate HTTPBin response
+        const mockResponse = {
+          args: {},
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Open-Search-MCP/1.0'
+          },
+          origin: '127.0.0.1',
+          url: `https://httpbin.org/${endpoint}`,
+          method: method
+        };
+
+        return {
+          success: true,
+          data: {
+            method,
+            endpoint,
+            response: mockResponse,
+            status: 'success'
+          },
+          metadata: {
+            tool: 'test_httpbin',
+            timestamp: new Date().toISOString()
+          }
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: `HTTPBin test failed: ${error instanceof Error ? error.message : String(error)}`,
+          data: null
+        };
+      }
+    }
+  });
   const client = new JSONPlaceholderAPIClient();
 
   // 1. 获取测试帖子

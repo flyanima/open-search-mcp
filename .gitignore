@@ -427,3 +427,22 @@ diagnostics/
 health-checks/
 status-reports/
 performance-logs/
+
+# Claude Desktop configuration files with API keys (SECURITY CRITICAL)
+claude_desktop_config.json
+claude-desktop-config.json
+claude_desktop_config_with_keys.json
+*claude*config*keys*.json
+*claude*desktop*config*.json
+
+# Deployment scripts with sensitive information
+deploy-to-claude.ps1
+deploy-to-claude.sh
+*deploy*claude*
+*setup*claude*
+
+# Test files that might contain API keys
+test-all-*.js
+test-filtered-*.js
+functional-test.js
+*-test-*.js
